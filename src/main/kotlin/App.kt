@@ -14,6 +14,9 @@ import javax.swing.WindowConstants
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+
+
+
 import kotlin.time.ExperimentalTime
 
 fun main() {
@@ -109,20 +112,39 @@ class Renderer(val layer: SkiaLayer): SkiaRenderer {
         val clockRect = Rect.makeXYWH(x, y, clockRadius * 2, clockRadius * 2)
         canvas.drawOval(clockRect, fill)
         canvas.drawOval(clockRect, clockStroke)
-        clockTicks(canvas, clockStroke, centerX, tickLen/3, centerY, clockRadius, 60)
+        clockTicks(canvas, clockStroke, centerX, tickLen / 3, centerY, clockRadius, 60)
         clockTicks(canvas, clockStroke, centerX, tickLen, centerY, clockRadius, 12)
+        if (hover){
+            canvas.drawCircle(x + clockRadius, y + clockRadius, clockRadius / 4, clockFill)
+            canvas.drawLine(centerX, centerY, centerX - clockRadius / 4, centerY - clockRadius / 4, clockFill);
+            canvas.drawLine(centerX - clockRadius / 4, centerY - clockRadius / 4, centerX - clockRadius / 4, centerY, clockFill);
+
+            canvas.drawLine(centerX + clockRadius / 4, centerY, centerX + clockRadius / 4, centerY - clockRadius / 4, clockFill);
+            canvas.drawLine(centerX + clockRadius / 4, centerY - clockRadius / 4, centerX, centerY, clockFill);
+
+            canvas.drawString("1001", x - 1, y + clockRadius - 1, font, paint)
+            canvas.drawString("110", x + clockRadius - 1, y + 2 * clockRadius - 2, font, paint)
+            canvas.drawString("11", x + 2 * clockRadius - 20, y + clockRadius - 1, font, paint)
+            canvas.drawString("1100", x + clockRadius - 1, y + 28, font, paint)
+        }
+        else {
+            canvas.drawString("9", x - 1, y + clockRadius - 1, font, paint)
+            canvas.drawString("6", x + clockRadius - 1, y + 2 * clockRadius - 2, font, paint)
+            canvas.drawString("3", x + 2 * clockRadius - 20, y + clockRadius - 1, font, paint)
+            canvas.drawString("12", x + clockRadius - 1, y + 28, font, paint)
+        }
     }
 
     private fun displayClockHands(canvas: Canvas, centerX: Float, centerY: Float, clockRadius: Float, tickLen: Float,
                                   msTime: Long) {
 
-        val secShare = msTime/60000f
+        val secShare = msTime / 60000f
         // Секундная стрелка
         clockHand(canvas, clockStrokeS, centerX, centerY, secShare, clockRadius - tickLen)
         // Минутная стрелка
-        clockHand(canvas, clockStrokeMH, centerX, centerY, secShare/60, clockRadius - tickLen)
+        clockHand(canvas, clockStrokeMH, centerX, centerY, secShare / 60, clockRadius - tickLen)
         // Часовая стрелка
-        clockHand(canvas, clockStrokeMH, centerX, centerY, secShare/60/12, (clockRadius - tickLen)/2)
+        clockHand(canvas, clockStrokeMH, centerX, centerY, secShare / 60 / 12, (clockRadius - tickLen) / 2)
     }
 
     private fun clockTicks(
